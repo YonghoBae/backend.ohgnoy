@@ -31,8 +31,6 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 5 }, // 파일 크기 제한: 5MB
 });
 
-
-
 router.get("/list", async (req, res) => {
   let apiResult = {
     data: null,
@@ -52,7 +50,6 @@ router.get("/list", async (req, res) => {
   res.status(200).json(apiResult);
 });
 
-
 router.post("/create", upload.single("coverImage"), async (req, res) => {
   let apiResult = {
     data: null,
@@ -60,6 +57,11 @@ router.post("/create", upload.single("coverImage"), async (req, res) => {
   };
 
   try {
+    // JWT 토큰 유효성 검증 처리
+    if (!req.headers.authorization) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
     var token = req.headers.authorization.split("Bearer ")[1];
     const loginUser = await jwt.verify(token, process.env.JWT_AUTH_KEY);
 
