@@ -96,7 +96,33 @@ router.post("/modify/:id", async (req, res) => {
   };
 
   try {
-  } catch (err) {}
+       // JWT 토큰 유효성 검증 처리
+       if (!req.headers.authorization) {
+        return res.status(401).json({ msg: "Unauthorized" });
+      }
+  
+      var token = req.headers.authorization.split("Bearer ")[1];
+      const loginUser = await jwt.verify(token, process.env.JWT_AUTH_KEY);
+  
+      let coverImagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  
+      const post = {
+        title: req.body.title,
+        excerpt: req.body.excerpt,
+        coverImage: coverImagePath,
+        author_id: loginUser.user_id,
+        view_cnt: 0,
+      };
+  
+      const modifyPost = await db.Post.update();
+  
+      apiResult.data = createPost;
+      apiResult.msg = "Success";
+  } catch (err) {
+    apiResult.data = null;
+    apiResult.msg = "ServerError";
+    res.status(500).json(apiResult);
+  }
 
   res.status(200).json(apiResult);
 });
