@@ -13,6 +13,10 @@ router.get("/", async (req, res, next) => {
   res.render("index", { title: "BackEnd API" });
 });
 
+router.get("/jenkins", async(req,res,next)=>{
+  return res.json({code:200,msg:"Ok"});
+})
+
 router.get("/token", async (req, res) => {
   let apiResult = {
     code: 400,
