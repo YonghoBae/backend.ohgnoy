@@ -13,7 +13,8 @@ router.get("/", async (req, res, next) => {
   res.render("index", { title: "BackEnd API" });
 });
 
-router.get("/jenkins", async(req,res,next)=>{
+//jenkins 테스트용 임시 url
+router.get("/jenkins", async(req,res)=>{
   return res.json({code:200,msg:"Ok"});
 })
 
