@@ -14,7 +14,7 @@ router.get("/", async (req, res, next) => {
 });
 
 //jenkins 테스트용 임시 url
-router.get("/jenkins", async(req,res)=>{
+router.get("/jenkins", async(req,res,next)=>{
   return res.json({code:200,msg:"Ok"});
 })
 
