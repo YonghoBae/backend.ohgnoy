@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: ohgnoy-backend
+    ports:
+      - "${PORT}:${PORT}"           # ← 포트 연동
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    depends_on:
+      - ohgnoy
+
+  ohgnoy:
+    image: mysql:8
+    container_name: ohgnoy-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:${DB_PORT}"        # ← 내부 포트는 .env에서
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

@@ -20,7 +20,29 @@ var debug = require("debug")("ohgnoy-backend:server");
 const webSocket = require("./socket");
 
 var app = express();
-sequelize.sync();
+
+const MAX_RETRIES = 10;
+const RETRY_DELAY = 3000; // 3초
+
+const connectWithRetry = async (retries = MAX_RETRIES) => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ DB 연결 성공');
+    await sequelize.sync();
+    console.log('✅ 모델 동기화 완료');
+  } catch (err) {
+    console.error(`❌ DB 연결 실패. 남은 시도: ${retries - 1}`, err.message);
+    if (retries > 1) {
+      setTimeout(() => connectWithRetry(retries - 1), RETRY_DELAY);
+    } else {
+      console.error('🔥 DB 연결 시도 모두 실패. 서버 종료');
+      process.exit(1);
+    }
+  }
+};
+
+connectWithRetry();
+
 
 // 모든 웹사이트/모바일 프론트에서 RESTAPI를 접근할 수 있게 허락함
 app.use(cors());
